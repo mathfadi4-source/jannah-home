@@ -69,18 +69,14 @@ export default function Logo({
         <BedMark size={markSize} variant={variant} />
       </span>
       {withText && (
-        <span className="flex flex-col leading-none">
+        <span className="flex flex-col leading-none min-w-0">
           <span
-            className={`font-display font-semibold tracking-[0.06em] ${titleColor}`}
-            style={{ fontSize: Math.round(markSize * 0.46) }}
+            className={`font-display font-semibold tracking-[0.08em] whitespace-nowrap text-[15px] sm:text-lg ${titleColor}`}
           >
             JANNAH HOME
           </span>
           {tagline && (
-            <span
-              className={`brand-eyebrow mt-1 ${subColor}`}
-              style={{ fontSize: Math.max(9, Math.round(markSize * 0.24)) }}
-            >
+            <span className={`brand-eyebrow mt-0.5 text-[8px] sm:text-[10px] whitespace-nowrap ${subColor}`}>
               {tagline}
             </span>
           )}
