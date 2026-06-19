@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { put } from "@vercel/blob";
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 
 export const runtime = "nodejs";
 
@@ -28,9 +27,9 @@ const ALLOWED_CONTENT_TYPES = [
   "video/webm",
 ];
 
-// Cap upload size (applies to both paths). Client-direct uploads stream to Blob
-// and so can comfortably exceed Vercel's ~4.5 MB serverless body limit.
-const MAX_BYTES = 50 * 1024 * 1024; // 50 MB
+// Vercel serverless functions accept a request body up to ~4.5 MB. We cap a bit
+// below that so the user gets a clear message instead of a platform-level error.
+const MAX_BYTES = 4 * 1024 * 1024; // 4 MB
 
 function buildSafeFilename(originalName: string): string {
   // The extension is validated against an allow-list and the final name is
@@ -42,48 +41,6 @@ function buildSafeFilename(originalName: string): string {
 }
 
 export async function POST(request: Request) {
-  const contentType = request.headers.get("content-type") || "";
-  const isMultipart = contentType.includes("multipart/form-data");
-
-  // ---------- Path A: Vercel Blob client-direct upload (JSON handshake) ----------
-  // The browser uploads the file straight to Blob; this route only mints a
-  // short-lived, scoped token. This avoids the serverless request-body limit.
-  if (!isMultipart) {
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      // No Blob store configured — the client will fall back to multipart.
-      return NextResponse.json(
-        {
-          error:
-            "Stockage non configuré. Créez un store Vercel Blob (variable BLOB_READ_WRITE_TOKEN).",
-        },
-        { status: 501 }
-      );
-    }
-
-    try {
-      const body = (await request.json()) as HandleUploadBody;
-      const json = await handleUpload({
-        body,
-        request,
-        onBeforeGenerateToken: async () => ({
-          allowedContentTypes: ALLOWED_CONTENT_TYPES,
-          maximumSizeInBytes: MAX_BYTES,
-          addRandomSuffix: true,
-          // Group uploads under a folder; pathname is sanitized + randomized.
-          tokenPayload: JSON.stringify({ folder: "uploads" }),
-        }),
-        // Called by Blob after the upload finishes. We persist the URL on the
-        // product when the admin submits the form, so nothing to do here.
-        onUploadCompleted: async () => {},
-      });
-      return NextResponse.json(json);
-    } catch (err) {
-      console.error("Blob client-upload handshake failed:", err);
-      return NextResponse.json({ error: "Erreur upload" }, { status: 500 });
-    }
-  }
-
-  // ---------- Path B: multipart (local dev / Docker) ----------
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -93,7 +50,7 @@ export async function POST(request: Request) {
     }
     if (file.size > MAX_BYTES) {
       return NextResponse.json(
-        { error: "Fichier trop volumineux (max 50 Mo)." },
+        { error: "Fichier trop volumineux (max 4 Mo)." },
         { status: 413 }
       );
     }
@@ -106,7 +63,8 @@ export async function POST(request: Request) {
 
     const filename = buildSafeFilename(file.name);
 
-    // If a Blob token is present, prefer Blob even for multipart (small files).
+    // Production (Vercel): store on Vercel Blob (server upload). The file is
+    // streamed to Blob with a public URL so it can be shown on the storefront.
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const blob = await put(`uploads/${filename}`, file, {
         access: "public",
@@ -120,12 +78,12 @@ export async function POST(request: Request) {
     // of throwing an opaque 500.
     if (process.env.VERCEL) {
       console.error(
-        "Upload failed: BLOB_READ_WRITE_TOKEN is not set on Vercel. Add a Blob store in the project Storage tab."
+        "Upload failed: BLOB_READ_WRITE_TOKEN is not set. Connect a Blob store in the Vercel project Storage tab, then redeploy."
       );
       return NextResponse.json(
         {
           error:
-            "Stockage non configuré. Créez un store Vercel Blob (variable BLOB_READ_WRITE_TOKEN).",
+            "Stockage non configuré. Connectez un store Vercel Blob (BLOB_READ_WRITE_TOKEN) puis redéployez.",
         },
         { status: 501 }
       );
