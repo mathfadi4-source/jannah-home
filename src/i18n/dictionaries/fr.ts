@@ -10,6 +10,7 @@ const fr: Dictionary = {
     contact: "Contact",
     menu: "Menu",
     close: "Fermer",
+    language: "Langue",
   },
   footer: {
     tagline:
