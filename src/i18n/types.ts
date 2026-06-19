@@ -11,6 +11,7 @@ export type Dictionary = {
     contact: string;
     menu: string;
     close: string;
+    language: string;
   };
   footer: {
     tagline: string;
