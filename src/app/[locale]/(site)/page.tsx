@@ -14,6 +14,11 @@ import { getEffectivePrice } from "@/lib/utils";
 
 const SITE_URL = "https://jannah-home.vercel.app";
 
+// Always render from the live database so newly added/edited products and their
+// images appear immediately (the parent layout's generateStaticParams would
+// otherwise cause this page to be statically cached at build time).
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ locale: string }>;
 };
@@ -38,6 +43,16 @@ export default async function HomePage({ params }: Props) {
     .filter((p) => p.imageUrl)
     .slice(0, 3)
     .map((p) => p.imageUrl as string);
+
+  // Representative image per category, taken from the most recent product that
+  // has one (falls back to brand artwork inside CategoryTiles when absent).
+  const categoryImageFor = (cat: string) =>
+    products.find((p) => p.category === cat && p.imageUrl)?.imageUrl ?? null;
+  const categoryImages = {
+    COUETTE: categoryImageFor("COUETTE"),
+    DRAP: categoryImageFor("DRAP"),
+    PARURE: categoryImageFor("PARURE"),
+  };
 
   const toAbsolute = (url: string) =>
     url.startsWith("http") ? url : `${SITE_URL}${url}`;
@@ -112,7 +127,7 @@ export default async function HomePage({ params }: Props) {
             <h2 className="section-title">{dict.home.categoriesTitle}</h2>
             <p className="text-muted">{dict.home.categoriesSubtitle}</p>
           </div>
-          <CategoryTiles locale={locale} dict={dict} />
+          <CategoryTiles locale={locale} dict={dict} images={categoryImages} />
         </section>
 
         {/* Promotions */}
