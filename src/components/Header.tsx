@@ -39,7 +39,9 @@ export default function Header({ locale, dict }: HeaderProps) {
             {SITE.displayPhone}
           </a>
 
-          <LanguageSwitcher currentLocale={locale} />
+          <div className="hidden md:flex">
+            <LanguageSwitcher currentLocale={locale} />
+          </div>
 
           <Link
             href={`/${locale}/commander`}
