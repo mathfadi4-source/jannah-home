@@ -13,33 +13,25 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
-import { upload } from "@vercel/blob/client";
 import { CATEGORY_LABELS, formatPrice } from "@/lib/utils";
 
+// Keep in sync with the server route (Vercel serverless body limit ~4.5 MB).
+const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+
 /**
- * Uploads a file and returns its public URL.
- * Prefers client-direct upload to Vercel Blob (no serverless body-size limit);
- * falls back to a multipart POST (local dev / Docker filesystem) when Blob is
- * not configured.
+ * Uploads a file through the server route and returns its public URL.
+ * In production the server stores it on Vercel Blob; in local dev/Docker it
+ * falls back to the local filesystem.
  */
 async function uploadFile(file: File): Promise<string> {
-  try {
-    const blob = await upload(file.name, file, {
-      access: "public",
-      handleUploadUrl: "/api/upload",
-    });
-    return blob.url;
-  } catch {
-    // Blob not configured (e.g. local dev) — fall back to the server route.
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.url) {
-      throw new Error(data.error || "Échec de l'upload");
-    }
-    return data.url as string;
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch("/api/upload", { method: "POST", body: fd });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.url) {
+    throw new Error(data.error || "Échec de l'upload");
   }
+  return data.url as string;
 }
 
 type Product = {
@@ -91,6 +83,13 @@ export default function AdminProductsPage() {
     if (!file) return;
 
     setError("");
+
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError("Fichier trop volumineux (max 4 Mo). Compressez l'image avant l'envoi.");
+      e.target.value = "";
+      return;
+    }
+
     setUploading(kind);
 
     try {
