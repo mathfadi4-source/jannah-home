@@ -13,7 +13,34 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import { upload } from "@vercel/blob/client";
 import { CATEGORY_LABELS, formatPrice } from "@/lib/utils";
+
+/**
+ * Uploads a file and returns its public URL.
+ * Prefers client-direct upload to Vercel Blob (no serverless body-size limit);
+ * falls back to a multipart POST (local dev / Docker filesystem) when Blob is
+ * not configured.
+ */
+async function uploadFile(file: File): Promise<string> {
+  try {
+    const blob = await upload(file.name, file, {
+      access: "public",
+      handleUploadUrl: "/api/upload",
+    });
+    return blob.url;
+  } catch {
+    // Blob not configured (e.g. local dev) — fall back to the server route.
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.url) {
+      throw new Error(data.error || "Échec de l'upload");
+    }
+    return data.url as string;
+  }
+}
 
 type Product = {
   id: string;
@@ -65,22 +92,19 @@ export default function AdminProductsPage() {
 
     setError("");
     setUploading(kind);
-    const fd = new FormData();
-    fd.append("file", file);
 
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (data.url) {
+      const url = await uploadFile(file);
+      if (url) {
         setForm((f) => ({
           ...f,
-          ...(kind === "video" ? { videoUrl: data.url } : { imageUrl: data.url }),
+          ...(kind === "video" ? { videoUrl: url } : { imageUrl: url }),
         }));
       } else {
-        setError(data.error || "Échec de l'upload");
+        setError("Échec de l'upload");
       }
-    } catch {
-      setError("Échec de l'upload");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de l'upload");
     } finally {
       setUploading(null);
       e.target.value = "";
