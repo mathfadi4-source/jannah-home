@@ -10,6 +10,7 @@ const ar: Dictionary = {
     contact: "اتصل بنا",
     menu: "القائمة",
     close: "إغلاق",
+    language: "اللغة",
   },
   footer: {
     tagline:
