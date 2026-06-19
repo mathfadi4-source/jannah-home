@@ -15,10 +15,10 @@ type HeaderProps = {
 export default function Header({ locale, dict }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-border shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-        <Logo href={`/${locale}`} tagline={dict.siteTagline} markSize={44} />
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2">
+        <Logo href={`/${locale}`} tagline={dict.siteTagline} markSize={40} className="min-w-0" />
 
-        <nav className="flex items-center gap-1 sm:gap-2">
+        <nav className="flex items-center gap-1 sm:gap-2 shrink-0">
           <Link
             href={`/${locale}`}
             className="hidden md:inline text-sm font-medium text-muted hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-background"
@@ -43,7 +43,7 @@ export default function Header({ locale, dict }: HeaderProps) {
 
           <Link
             href={`/${locale}/commander`}
-            className="hidden sm:inline-flex btn btn-primary text-sm py-2 px-4 whitespace-nowrap"
+            className="hidden md:inline-flex btn btn-primary text-sm py-2 px-4 whitespace-nowrap"
           >
             <ShoppingBag className="h-4 w-4" />
             {dict.nav.order}
