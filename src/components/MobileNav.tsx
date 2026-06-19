@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, Package, ShoppingBag, Phone } from "lucide-react";
+import { Menu, X, Home, Package, ShoppingBag, Phone, ChevronRight } from "lucide-react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
 import { SITE } from "@/lib/site";
@@ -40,7 +40,12 @@ export default function MobileNav({
   const links = [
     { href: `/${locale}`, label: dict.nav.home, Icon: Home },
     { href: `/${locale}#products`, label: dict.nav.products, Icon: Package },
-    { href: `/${locale}/commander`, label: dict.nav.order, Icon: ShoppingBag },
+  ];
+
+  const categories = [
+    { href: `/${locale}#products`, label: dict.tiles.couetteTitle },
+    { href: `/${locale}#products`, label: dict.tiles.drapTitle },
+    { href: `/${locale}#products`, label: dict.tiles.parureTitle },
   ];
 
   return (
@@ -105,6 +110,22 @@ export default function MobileNav({
                 );
               })}
             </nav>
+
+            <div className="mt-7">
+              <p className="brand-eyebrow mb-3 text-muted">{dict.home.categoriesTitle}</p>
+              <div className="flex flex-col gap-2">
+                {categories.map((c) => (
+                  <Link
+                    key={c.label}
+                    href={c.href}
+                    className="flex items-center justify-between rounded-xl bg-white/80 px-4 py-3 text-base font-medium text-foreground shadow-sm hover:bg-white hover:text-primary transition-colors"
+                  >
+                    {c.label}
+                    <ChevronRight className="h-5 w-5 text-accent-dark rtl:rotate-180" />
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             <div className="mt-8 text-center">
               <p className="brand-eyebrow mb-3 text-muted">{dict.nav.language}</p>
