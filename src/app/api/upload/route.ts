@@ -63,30 +63,22 @@ export async function POST(request: Request) {
 
     const filename = buildSafeFilename(file.name);
 
-    // Production (Vercel): store on Vercel Blob (server upload). The file is
-    // streamed to Blob with a public URL so it can be shown on the storefront.
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    // Production (Vercel): store on Vercel Blob (server upload). We do NOT pass a
+    // `token` so the SDK resolves credentials automatically: it prefers the
+    // OIDC token (VERCEL_OIDC_TOKEN + BLOB_STORE_ID, injected by a connected
+    // store) and falls back to BLOB_READ_WRITE_TOKEN. The file is stored with a
+    // public URL so it can be shown on the storefront.
+    const blobConfigured =
+      process.env.VERCEL ||
+      process.env.BLOB_STORE_ID ||
+      process.env.BLOB_READ_WRITE_TOKEN;
+
+    if (blobConfigured) {
       const blob = await put(`uploads/${filename}`, file, {
         access: "public",
-        token: process.env.BLOB_READ_WRITE_TOKEN,
         contentType: file.type || undefined,
       });
       return NextResponse.json({ url: blob.url });
-    }
-
-    // On Vercel the filesystem is read-only; refuse with a clear message instead
-    // of throwing an opaque 500.
-    if (process.env.VERCEL) {
-      console.error(
-        "Upload failed: BLOB_READ_WRITE_TOKEN is not set. Connect a Blob store in the Vercel project Storage tab, then redeploy."
-      );
-      return NextResponse.json(
-        {
-          error:
-            "Stockage non configuré. Connectez un store Vercel Blob (BLOB_READ_WRITE_TOKEN) puis redéployez.",
-        },
-        { status: 501 }
-      );
     }
 
     // Local dev / Docker: store on the local filesystem.
