@@ -43,13 +43,15 @@ export default function Header({ locale, dict }: HeaderProps) {
             <LanguageSwitcher currentLocale={locale} />
           </div>
 
-          <Link
-            href={`/${locale}/commander`}
-            className="hidden md:inline-flex btn btn-primary text-sm py-2 px-4 whitespace-nowrap"
-          >
-            <ShoppingBag className="h-4 w-4" />
-            {dict.nav.order}
-          </Link>
+          <div className="hidden md:block">
+            <Link
+              href={`/${locale}/commander`}
+              className="btn btn-primary text-sm py-2 px-4 whitespace-nowrap"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              {dict.nav.order}
+            </Link>
+          </div>
 
           <MobileNav locale={locale} dict={dict} />
         </nav>
