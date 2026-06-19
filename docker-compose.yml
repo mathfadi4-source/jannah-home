@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: jannah
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-jannah-local-password}"
+      POSTGRES_DB: jannah
+    volumes:
+      - jannah-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jannah -d jannah"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jannah-home
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: "postgresql://jannah:${POSTGRES_PASSWORD:-jannah-local-password}@db:5432/jannah"
+      # Override these in a local .env file or your host environment.
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-change-this-password}"
+      WHATSAPP_OWNER_PHONE: "${WHATSAPP_OWNER_PHONE:-21693775858}"
+      CALLMEBOT_API_KEY: "${CALLMEBOT_API_KEY:-}"
+      # Leave empty to store uploads on the local volume below.
+      # On Vercel, set BLOB_READ_WRITE_TOKEN instead (Vercel Blob).
+      BLOB_READ_WRITE_TOKEN: "${BLOB_READ_WRITE_TOKEN:-}"
+      # Set to "true" only on the FIRST run to load demo data (this resets the DB).
+      SEED_ON_START: "${SEED_ON_START:-false}"
+    volumes:
+      # Persist uploaded media across restarts/rebuilds (when not using Vercel Blob).
+      - jannah-uploads:/app/public/uploads
+    restart: unless-stopped
+
+volumes:
+  jannah-db:
+  jannah-uploads:

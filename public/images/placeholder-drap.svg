@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#faf7f2"/>
+      <stop offset="100%" style="stop-color:#ede4d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg3)"/>
+  <rect x="80" y="280" width="640" height="120" rx="16" fill="#fff" stroke="#c9a961" stroke-width="2"/>
+  <rect x="80" y="160" width="640" height="100" rx="12" fill="#f5f0e8" stroke="#d4c4a8" stroke-width="1"/>
+  <line x1="120" y1="340" x2="680" y2="340" stroke="#1a4731" stroke-width="2" opacity="0.3"/>
+  <text x="400" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#1a4731">Drap de lit</text>
+</svg>

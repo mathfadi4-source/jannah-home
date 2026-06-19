@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 750" width="1000" height="750" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7efe4"/>
+      <stop offset="1" stop-color="#e9d6ba"/>
+    </linearGradient>
+    <linearGradient id="duvet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c07b3a"/>
+      <stop offset="1" stop-color="#9a5a26"/>
+    </linearGradient>
+    <pattern id="weave" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M0 8 H16 M8 0 V16" stroke="#4a2d0e" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1000" height="750" fill="url(#bg)"/>
+  <rect width="1000" height="750" fill="url(#weave)"/>
+
+  <!-- arch backdrop -->
+  <path d="M250 470 V250 a250 250 0 0 1 500 0 V470 Z" fill="#e3cdb0" opacity="0.55"/>
+
+  <!-- floor shadow -->
+  <ellipse cx="500" cy="648" rx="368" ry="34" fill="#4a2d0e" opacity="0.08"/>
+
+  <!-- headboard -->
+  <rect x="208" y="168" width="584" height="214" rx="36" fill="#4a2d0e"/>
+  <rect x="208" y="168" width="584" height="214" rx="36" fill="#ffffff" opacity="0.06"/>
+
+  <!-- pillows -->
+  <rect x="258" y="296" width="214" height="116" rx="36" fill="#faf6f0"/>
+  <rect x="258" y="296" width="214" height="116" rx="36" fill="none" stroke="#e8d5b8" stroke-opacity="0.6" stroke-width="3"/>
+  <rect x="528" y="296" width="214" height="116" rx="36" fill="#faf6f0"/>
+  <rect x="528" y="296" width="214" height="116" rx="36" fill="none" stroke="#e8d5b8" stroke-opacity="0.6" stroke-width="3"/>
+
+  <!-- mattress base -->
+  <rect x="168" y="430" width="664" height="156" rx="30" fill="#3a2208"/>
+
+  <!-- duvet -->
+  <rect x="180" y="402" width="640" height="150" rx="28" fill="url(#duvet)"/>
+  <!-- turn-down fold -->
+  <rect x="180" y="402" width="640" height="40" rx="18" fill="#faf6f0" opacity="0.85"/>
+  
+
+  <!-- stitched stripes -->
+  <g stroke="#faf6f0" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round">
+    <line x1="232" y1="478" x2="768" y2="478"/>
+    <line x1="232" y1="506" x2="768" y2="506"/>
+    <line x1="232" y1="534" x2="768" y2="534"/>
+  </g>
+</svg>

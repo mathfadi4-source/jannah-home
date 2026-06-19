@@ -1,0 +1,11 @@
+<svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jannah Home">
+  <rect x="0" y="0" width="72" height="72" rx="16" fill="#c07b3a"/>
+  <g transform="translate(1, 4)">
+    <rect x="5" y="24" width="60" height="28" rx="8" fill="#f5ede0"/>
+    <rect x="7" y="8" width="20" height="20" rx="6" fill="#f5ede0"/>
+    <rect x="43" y="8" width="20" height="20" rx="6" fill="#f5ede0"/>
+    <rect x="9" y="25" width="16" height="11" rx="3" fill="#c07b3a"/>
+    <rect x="45" y="25" width="16" height="11" rx="3" fill="#c07b3a"/>
+    <rect x="5" y="50" width="60" height="8" rx="4" fill="#7a4b1a"/>
+  </g>
+</svg>

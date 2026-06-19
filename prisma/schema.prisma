@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductCategory {
+  COUETTE
+  DRAP
+  PARURE
+}
+
+enum OrderStatus {
+  NOUVELLE
+  EN_COURS
+  TERMINEE
+}
+
+model Product {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  category    ProductCategory
+  price       Float
+  promoPrice  Float?
+  imageUrl    String?
+  videoUrl    String?
+  active      Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  customerName    String
+  email           String
+  phone           String
+  address         String
+  tailleCouette   String?
+  tailleDrap      String?
+  notes           String?
+  status          OrderStatus @default(NOUVELLE)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int     @default(1)
+  unitPrice Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  discountPct Float?
+  active      Boolean  @default(true)
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+}
