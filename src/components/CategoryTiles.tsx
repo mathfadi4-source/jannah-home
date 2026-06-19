@@ -11,31 +11,41 @@ type Tile = {
   image: string;
 };
 
+// Fallback artwork used only when a category has no product image yet.
+const FALLBACK_IMAGE: Record<string, string> = {
+  COUETTE: "/images/products/couette-sable.svg",
+  DRAP: "/images/products/drap-caramel.svg",
+  PARURE: "/images/products/parure-satin.svg",
+};
+
 export default function CategoryTiles({
   locale,
   dict,
+  images,
 }: {
   locale: Locale;
   dict: Dictionary;
+  /** Representative image per category, sourced from the products API. */
+  images?: Partial<Record<string, string | null>>;
 }) {
   const tiles: Tile[] = [
     {
       key: "COUETTE",
       title: dict.tiles.couetteTitle,
       desc: dict.tiles.couetteDesc,
-      image: "/images/products/couette-sable.svg",
+      image: images?.COUETTE || FALLBACK_IMAGE.COUETTE,
     },
     {
       key: "DRAP",
       title: dict.tiles.drapTitle,
       desc: dict.tiles.drapDesc,
-      image: "/images/products/drap-caramel.svg",
+      image: images?.DRAP || FALLBACK_IMAGE.DRAP,
     },
     {
       key: "PARURE",
       title: dict.tiles.parureTitle,
       desc: dict.tiles.parureDesc,
-      image: "/images/products/parure-satin.svg",
+      image: images?.PARURE || FALLBACK_IMAGE.PARURE,
     },
   ];
 
