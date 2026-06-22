@@ -2,7 +2,7 @@ import type { Dictionary } from "../types";
 
 const fr: Dictionary = {
   siteName: "Jannah Home",
-  siteTagline: "Couettes & draps de lit",
+  siteTagline: "Confort Naturel",
   nav: {
     home: "Accueil",
     products: "Produits",
