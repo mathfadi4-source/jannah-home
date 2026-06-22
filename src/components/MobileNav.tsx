@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Logo from "@/components/Logo";
 import { usePathname } from "next/navigation";
 import { Menu, X, Home, Package, ShoppingBag, Phone, ChevronRight } from "lucide-react";
 import type { Locale } from "@/i18n/config";
@@ -76,20 +76,9 @@ export default function MobileNav({
           </button>
 
           <div className="flex-1 overflow-y-auto px-6 pt-14 pb-6 flex flex-col">
-            <Link
-              href={`/${locale}`}
-              className="mx-auto mb-8 block w-40 max-w-[45vw]"
-              aria-label={dict.siteName}
-            >
-              <Image
-                src="/images/logo.jpg"
-                alt="Jannah Home"
-                width={320}
-                height={320}
-                priority
-                className="h-auto w-full rounded-2xl shadow-sm"
-              />
-            </Link>
+            <div className="mx-auto mb-8 flex justify-center">
+              <Logo href={`/${locale}`} tagline={dict.siteTagline} markSize={56} />
+            </div>
 
             <nav className="flex flex-col gap-3">
               {links.map(({ href, label, Icon }) => {
