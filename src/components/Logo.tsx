@@ -16,13 +16,8 @@ type LogoProps = {
   className?: string;
 };
 
-/**
- * Jannah Home brand mark — a bed icon (mattress + two pillows) rendered as
- * crisp, scalable SVG, recreated from the official brand identity sheet.
- */
 function BedMark({ size, variant }: { size: number; variant: LogoVariant }) {
   const isDark = variant === "onDark";
-  // Caramel bed on a linen tile (light) / terracotta bed on deep walnut (dark).
   const tile = isDark ? "#3a2010" : "#f5ede0";
   const body = isDark ? "#d9935a" : "#c07b3a";
   const pillow = isDark ? "#3a2010" : "#f5ede0";
@@ -53,7 +48,7 @@ function BedMark({ size, variant }: { size: number; variant: LogoVariant }) {
 
 export default function Logo({
   withText = true,
-  tagline,
+  tagline = "Confort Naturel",
   href,
   markSize = 40,
   variant = "light",
