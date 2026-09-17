@@ -1,91 +1,47 @@
+import Image from "next/image";
 import Link from "next/link";
 
-type LogoVariant = "light" | "onDark";
+/** Transparent-background export of the brand lockup (bed mark + wordmark + tagline). */
+const LOCKUP_SRC = "/brand/logo-lockup.png";
+const LOCKUP_WIDTH = 811;
+const LOCKUP_HEIGHT = 416;
 
 type LogoProps = {
-  /** Show the "JANNAH HOME" wordmark next to the bed mark. */
-  withText?: boolean;
-  /** Small spaced caption under the wordmark (e.g. "Confort Naturel"). */
+  /** Localized tagline, used for the accessible name (the lockup bakes in the French one). */
   tagline?: string;
   /** If provided, the whole logo becomes a link. */
   href?: string;
-  /** Pixel size of the square bed-mark tile. */
-  markSize?: number;
-  /** "light" for cream/white surfaces, "onDark" for walnut surfaces. */
-  variant?: LogoVariant;
+  /** Height utilities, e.g. "h-12 w-auto". Width must stay auto to keep the ratio. */
   className?: string;
+  /** Set on the first logo above the fold so it is not lazy-loaded. */
+  priority?: boolean;
 };
 
-function BedMark({ size, variant }: { size: number; variant: LogoVariant }) {
-  const isDark = variant === "onDark";
-  const tile = isDark ? "#3a2010" : "#f5ede0";
-  const body = isDark ? "#d9935a" : "#c07b3a";
-  const pillow = isDark ? "#3a2010" : "#f5ede0";
-  const base = isDark ? "#c07b3a" : "#7a4b1a";
-
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 72 72"
-      role="img"
-      aria-label="Jannah Home"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
-    >
-      <rect x="0" y="0" width="72" height="72" rx="16" fill={tile} />
-      <g transform="translate(1, 4)">
-        <rect x="5" y="24" width="60" height="28" rx="8" fill={body} />
-        <rect x="7" y="8" width="20" height="20" rx="6" fill={body} />
-        <rect x="43" y="8" width="20" height="20" rx="6" fill={body} />
-        <rect x="9" y="25" width="16" height="11" rx="3" fill={pillow} />
-        <rect x="45" y="25" width="16" height="11" rx="3" fill={pillow} />
-        <rect x="5" y="50" width="60" height="8" rx="4" fill={base} />
-      </g>
-    </svg>
-  );
-}
-
 export default function Logo({
-  withText = true,
-  tagline = "Confort Naturel",
+  tagline,
   href,
-  markSize = 40,
-  variant = "light",
-  className = "",
+  className = "h-12 w-auto",
+  priority = false,
 }: LogoProps) {
-  const isDark = variant === "onDark";
-  const titleColor = isDark ? "text-[#f5ede0]" : "text-primary-dark";
-  const subColor = isDark ? "text-[#d9935a]" : "text-accent-dark";
+  const alt = tagline ? `Jannah Home — ${tagline}` : "Jannah Home";
 
-  const content = (
-    <span className={`flex items-center gap-3 group ${className}`}>
-      <span className="transition-transform group-hover:scale-105">
-        <BedMark size={markSize} variant={variant} />
-      </span>
-      {withText && (
-        <span className="flex flex-col leading-none min-w-0">
-          <span
-            className={`font-display font-semibold tracking-[0.08em] whitespace-nowrap text-[15px] sm:text-lg ${titleColor}`}
-          >
-            JANNAH HOME
-          </span>
-          {tagline && (
-            <span className={`brand-eyebrow mt-0.5 text-[8px] sm:text-[10px] whitespace-nowrap ${subColor}`}>
-              {tagline}
-            </span>
-          )}
-        </span>
-      )}
-    </span>
+  const image = (
+    <Image
+      src={LOCKUP_SRC}
+      alt={alt}
+      width={LOCKUP_WIDTH}
+      height={LOCKUP_HEIGHT}
+      priority={priority}
+      className={`object-contain ${className}`}
+    />
   );
 
   if (href) {
     return (
-      <Link href={href} className="inline-flex" aria-label="Jannah Home">
-        {content}
+      <Link href={href} className="inline-flex shrink-0" aria-label={alt}>
+        {image}
       </Link>
     );
   }
-  return content;
+  return image;
 }

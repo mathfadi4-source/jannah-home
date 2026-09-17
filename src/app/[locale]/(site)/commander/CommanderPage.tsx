@@ -23,6 +23,8 @@ type Product = {
   name: string;
   price: number;
   promoPrice: number | null;
+  askSize: boolean;
+  sizes: string[];
 };
 
 type CommanderPageProps = {
@@ -40,7 +42,7 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<
-    { productId: string; quantity: number }[]
+    { productId: string; quantity: number; size: string }[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -52,7 +54,7 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
       .then((data: Product[]) => {
         setProducts(data);
         if (preselectedId && data.some((p) => p.id === preselectedId)) {
-          setSelectedProducts([{ productId: preselectedId, quantity: 1 }]);
+          setSelectedProducts([{ productId: preselectedId, quantity: 1, size: "" }]);
         }
       })
       .catch(() => setProducts([]));
@@ -62,7 +64,13 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
     setSelectedProducts((prev) =>
       prev.find((p) => p.productId === productId)
         ? prev.filter((p) => p.productId !== productId)
-        : [...prev, { productId, quantity: 1 }]
+        : [...prev, { productId, quantity: 1, size: "" }]
+    );
+  }
+
+  function updateSize(productId: string, size: string) {
+    setSelectedProducts((prev) =>
+      prev.map((p) => (p.productId === productId ? { ...p, size } : p))
     );
   }
 
@@ -78,11 +86,24 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
     .map((sel) => {
       const product = products.find((p) => p.id === sel.productId);
       if (!product) return null;
-      return { product, quantity: sel.quantity, lineTotal: effectivePrice(product) * sel.quantity };
+      return {
+        product,
+        quantity: sel.quantity,
+        size: sel.size,
+        lineTotal: effectivePrice(product) * sel.quantity,
+      };
     })
-    .filter((x): x is { product: Product; quantity: number; lineTotal: number } => x !== null);
+    .filter(
+      (x): x is { product: Product; quantity: number; size: string; lineTotal: number } =>
+        x !== null
+    );
 
   const total = selectedLines.reduce((sum, l) => sum + l.lineTotal, 0);
+
+  /** A product only offers a size when it is configured to ask for one. */
+  function offersSize(product: Product): boolean {
+    return product.askSize && product.sizes.length > 0;
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -106,8 +127,6 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
           email: formData.get("email"),
           phone: formData.get("phone"),
           address: formData.get("address"),
-          tailleCouette: formData.get("tailleCouette"),
-          tailleDrap: formData.get("tailleDrap"),
           notes: formData.get("notes"),
           items: selectedProducts,
         }),
@@ -210,41 +229,12 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
             </div>
           </section>
 
-          {/* Sizes */}
-          <section className="card p-6 space-y-4">
-            <h2 className="font-semibold text-lg">{dict.order.sizes}</h2>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium mb-1" htmlFor="tailleCouette">
-                  {dict.order.couetteSize}
-                </label>
-                <select id="tailleCouette" name="tailleCouette" defaultValue="">
-                  <option value="">{dict.order.choose}</option>
-                  {dict.sizes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" htmlFor="tailleDrap">
-                  {dict.order.drapSize}
-                </label>
-                <select id="tailleDrap" name="tailleDrap" defaultValue="">
-                  <option value="">{dict.order.choose}</option>
-                  {dict.sizes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="notes">
-                {dict.order.notes}
-              </label>
-              <textarea id="notes" name="notes" rows={2} placeholder={dict.order.notesPlaceholder} />
-            </div>
+          {/* Notes */}
+          <section className="card p-6">
+            <label className="block text-sm font-medium mb-1" htmlFor="notes">
+              {dict.order.notes}
+            </label>
+            <textarea id="notes" name="notes" rows={2} placeholder={dict.order.notesPlaceholder} />
           </section>
 
           {/* Products */}
@@ -261,10 +251,11 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
                   return (
                     <div
                       key={product.id}
-                      className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
+                      className={`p-3 rounded-xl border transition-colors ${
                         selected ? "border-accent bg-[#faf6f0]" : "border-border"
                       }`}
                     >
+                      <div className="flex items-center gap-3">
                       <button
                         type="button"
                         onClick={() => toggleProduct(product.id)}
@@ -303,6 +294,30 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
                           </button>
                         </div>
                       )}
+                      </div>
+
+                      {selected && offersSize(product) && (
+                        <div className="mt-3 ltr:pl-9 rtl:pr-9">
+                          <label
+                            className="block text-sm font-medium mb-1"
+                            htmlFor={`size-${product.id}`}
+                          >
+                            {dict.order.sizes}
+                          </label>
+                          <select
+                            id={`size-${product.id}`}
+                            value={selected.size}
+                            onChange={(e) => updateSize(product.id, e.target.value)}
+                          >
+                            <option value="">{dict.order.choose}</option>
+                            {product.sizes.map((size) => (
+                              <option key={size} value={size}>
+                                {size}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -331,6 +346,9 @@ export default function CommanderPage({ locale, dict }: CommanderPageProps) {
                     <span className="text-foreground">
                       {l.product.name}
                       <span className="text-muted-soft"> ×{l.quantity}</span>
+                      {l.size && (
+                        <span className="block text-xs text-muted-soft">{l.size}</span>
+                      )}
                     </span>
                     <span className="font-semibold text-primary whitespace-nowrap">
                       {formatPrice(l.lineTotal, locale)}

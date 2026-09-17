@@ -27,6 +27,9 @@ export default async function AdminLayout({
               <Link href="/admin/promotions" className="hover:underline">
                 Promotions
               </Link>
+              <Link href="/admin/hero" className="hover:underline">
+                Hero
+              </Link>
               <Link href="/fr" className="hover:underline opacity-80">
                 Voir le site
               </Link>

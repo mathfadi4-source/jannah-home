@@ -18,9 +18,9 @@ export function getEffectivePrice(product: {
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  COUETTE: "Matla couette",
-  DRAP: "Drap de lit",
-  PARURE: "Parure complète",
+  COUETTE: "Collection Été",
+  DRAP: "Collection Housse de Couette",
+  PARURE: "Collection Couette",
 };
 
 export const STATUS_LABELS: Record<string, string> = {

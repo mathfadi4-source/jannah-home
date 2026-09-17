@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+/** Trims, drops blanks and de-duplicates an incoming list of strings. */
+function normalizeStrings(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const labels = value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter((item) => item !== "");
+  return [...new Set(labels)];
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const all = searchParams.get("all") === "true";
@@ -19,6 +29,8 @@ export async function GET(request: Request) {
       name: true,
       price: true,
       promoPrice: true,
+      askSize: true,
+      sizes: true,
     },
     orderBy: { name: "asc" },
   });
@@ -36,8 +48,11 @@ export async function POST(request: Request) {
       price,
       promoPrice,
       imageUrl,
+      galleryUrls,
       videoUrl,
       active,
+      askSize,
+      sizes,
     } = body;
 
     if (!name || !category || price == null) {
@@ -63,8 +78,11 @@ export async function POST(request: Request) {
         price: parseFloat(price),
         promoPrice: promoPrice ? parseFloat(promoPrice) : null,
         imageUrl: imageUrl || null,
+        galleryUrls: normalizeStrings(galleryUrls),
         videoUrl: videoUrl || null,
         active: active !== false,
+        askSize: askSize !== false,
+        sizes: normalizeStrings(sizes),
       },
     });
 
@@ -94,8 +112,13 @@ export async function PUT(request: Request) {
           promoPrice: data.promoPrice ? parseFloat(data.promoPrice) : null,
         }),
         ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl || null }),
+        ...(data.galleryUrls !== undefined && {
+          galleryUrls: normalizeStrings(data.galleryUrls),
+        }),
         ...(data.videoUrl !== undefined && { videoUrl: data.videoUrl || null }),
         ...(data.active !== undefined && { active: data.active }),
+        ...(data.askSize !== undefined && { askSize: Boolean(data.askSize) }),
+        ...(data.sizes !== undefined && { sizes: normalizeStrings(data.sizes) }),
       },
     });
 

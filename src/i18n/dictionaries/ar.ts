@@ -14,7 +14,7 @@ const ar: Dictionary = {
   },
   footer: {
     tagline:
-      "مفروشات أنيقة: أغطية، ملاءات وأطقم سرير عالية الجودة. طلب بسيط بدون دفع عبر الإنترنت.",
+      "مفروشات أنيقة: أغطية، ملاءات وأطقم سرير عالية الجودة.",
     rights: "جميع الحقوق محفوظة",
     ownerSpace: "مساحة المالك",
     quickLinks: "روابط سريعة",
@@ -23,7 +23,7 @@ const ar: Dictionary = {
     hoursValue: "الإثنين – السبت: 9ص – 7م",
     location: "الموقع",
     locationValue: "تونس، تونس",
-    paymentNote: "الدفع عند الاستلام — لا حاجة للدفع عبر الإنترنت.",
+    paymentNote: "الدفع عند الاستلام",
   },
   hero: {
     eyebrow: "راحة وأناقة لغرفة نومك",
@@ -32,9 +32,6 @@ const ar: Dictionary = {
     chipQuality: "جودة مضمونة",
   },
   home: {
-    title: "مراتب، أغطية وملاءات سرير",
-    subtitle:
-      "تصفح مجموعتنا، اطلع على الأسعار وقدّم طلبك بدون دفع عبر الإنترنت. سنتواصل معك للتأكيد.",
     promotions: "العروض الحالية",
     discount: "خصم",
     ourProducts: "منتجاتنا",
@@ -55,7 +52,7 @@ const ar: Dictionary = {
     deliveryTitle: "توصيل إلى المنزل",
     deliveryDesc: "في كامل تونس، بسرعة وعناية.",
     paymentTitle: "الدفع عند الاستلام",
-    paymentDesc: "لا دفع عبر الإنترنت — ادفع عند الاستلام.",
+    paymentDesc: "ادفع عند الاستلام",
     qualityTitle: "جودة مضمونة",
     qualityDesc: "أقمشة ناعمة ومتينة، مختارة بعناية.",
     supportTitle: "استشارة عبر واتساب",
@@ -93,9 +90,9 @@ const ar: Dictionary = {
     from: "ابتداءً من",
   },
   categories: {
-    COUETTE: "غطاء لحاف",
-    DRAP: "ملاءة سرير",
-    PARURE: "طقم كامل",
+    COUETTE: "مجموعة الصيف",
+    DRAP: "مجموعة غطاء السرير ",
+    PARURE: " مجموعة اللحاف",
   },
   order: {
     title: "تقديم طلب",

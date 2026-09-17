@@ -22,7 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: product.name,
       description: product.description ?? undefined,
-      images: product.imageUrl ? [product.imageUrl] : undefined,
+      images: [product.imageUrl, ...product.galleryUrls].filter(
+        (url): url is string => Boolean(url)
+      ),
     },
   };
 }
@@ -56,6 +58,7 @@ export default async function ProductPage({ params }: Props) {
         <div className="md:sticky md:top-24">
           <ProductGallery
             imageUrl={product.imageUrl}
+            galleryUrls={product.galleryUrls}
             videoUrl={product.videoUrl}
             name={product.name}
             dict={dict}

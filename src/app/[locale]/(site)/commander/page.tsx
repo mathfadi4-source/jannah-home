@@ -3,6 +3,9 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { isValidLocale, type Locale } from "@/i18n/config";
 import CommanderPage from "./CommanderPage";
 
+// Products carry administrable size lists, so this page must reflect the live database.
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ locale: string }>;
 };

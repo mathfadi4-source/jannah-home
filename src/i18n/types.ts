@@ -32,8 +32,6 @@ export type Dictionary = {
     chipQuality: string;
   };
   home: {
-    title: string;
-    subtitle: string;
     promotions: string;
     discount: string;
     ourProducts: string;

@@ -18,30 +18,25 @@ export default function Hero({ locale, dict, images = [] }: HeroProps) {
     { Icon: ShieldCheck, label: dict.hero.chipQuality },
   ];
 
+  const hasMedia = images.length >= 1;
   const hasCollage = images.length >= 2;
 
   return (
     <section className="hero px-4 py-16 sm:py-20">
       <div
         className={`max-w-6xl mx-auto relative z-10 ${
-          hasCollage
+          hasMedia
             ? "grid lg:grid-cols-2 gap-12 items-center"
             : "max-w-3xl text-center"
         }`}
       >
         {/* Copy */}
-        <div className={`animate-fade-up ${hasCollage ? "text-center lg:text-start" : ""}`}>
-          <p className="section-eyebrow text-accent-light mb-4">{dict.hero.eyebrow}</p>
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 leading-[1.08]">
-            {dict.home.title}
-          </h1>
-          <p className="text-white/85 text-lg max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
-            {dict.home.subtitle}
-          </p>
+        <div className={`animate-fade-up ${hasMedia ? "text-center lg:text-start" : ""}`}>
+          <p className="section-eyebrow text-accent-light mb-8">{dict.hero.eyebrow}</p>
 
           <div
             className={`flex flex-col sm:flex-row items-center gap-4 ${
-              hasCollage ? "justify-center lg:justify-start" : "justify-center"
+              hasMedia ? "justify-center lg:justify-start" : "justify-center"
             }`}
           >
             <Link href={`/${locale}/commander`} className="btn btn-accent px-8 py-3.5 text-base">
@@ -59,7 +54,7 @@ export default function Hero({ locale, dict, images = [] }: HeroProps) {
 
           <div
             className={`mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 ${
-              hasCollage ? "justify-center lg:justify-start" : "justify-center"
+              hasMedia ? "justify-center lg:justify-start" : "justify-center"
             }`}
           >
             {chips.map(({ Icon, label }) => (
@@ -71,7 +66,21 @@ export default function Hero({ locale, dict, images = [] }: HeroProps) {
           </div>
         </div>
 
-        {/* Product collage */}
+        {/* Product collage — a single image fills the slot instead of overlapping. */}
+        {hasMedia && !hasCollage && (
+          <div className="relative h-[340px] sm:h-[420px] animate-fade-up" aria-hidden="true">
+            <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/20">
+              <Image
+                src={images[0]}
+                alt=""
+                fill
+                sizes="(max-width: 1024px) 90vw, 45vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
+        )}
+
         {hasCollage && (
           <div className="relative h-[340px] sm:h-[420px] animate-fade-up" aria-hidden="true">
             <div className="absolute top-0 ltr:right-4 rtl:left-4 w-[58%] aspect-[4/3] rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/20 rotate-2">

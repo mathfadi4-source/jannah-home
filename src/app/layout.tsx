@@ -90,6 +90,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <meta name="apple-mobile-web-app-title" content="JANNAH HOME" />
+      </head>
       <body
         className={`${jost.variable} ${cormorant.variable} ${notoArabic.variable} antialiased min-h-screen bg-background`}
       >

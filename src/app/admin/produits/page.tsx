@@ -42,8 +42,11 @@ type Product = {
   price: number;
   promoPrice: number | null;
   imageUrl: string | null;
+  galleryUrls: string[];
   videoUrl: string | null;
   active: boolean;
+  askSize: boolean;
+  sizes: string[];
 };
 
 const emptyForm = {
@@ -53,14 +56,18 @@ const emptyForm = {
   price: "",
   promoPrice: "",
   imageUrl: "",
+  galleryUrls: [] as string[],
   videoUrl: "",
+  askSize: true,
+  sizes: [] as string[],
 };
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [uploading, setUploading] = useState<"image" | "video" | null>(null);
+  const [uploading, setUploading] = useState<"image" | "video" | "gallery" | null>(null);
+  const [sizeDraft, setSizeDraft] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -148,12 +155,77 @@ export default function AdminProductsPage() {
       price: String(product.price),
       promoPrice: product.promoPrice ? String(product.promoPrice) : "",
       imageUrl: product.imageUrl || "",
+      galleryUrls: product.galleryUrls ?? [],
       videoUrl: product.videoUrl || "",
+      askSize: product.askSize,
+      sizes: product.sizes ?? [],
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  /** Uploads one or more gallery photos and appends them to the product. */
+  async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+
+    setError("");
+
+    if (files.some((file) => file.size > MAX_UPLOAD_BYTES)) {
+      setError("Chaque photo doit faire moins de 4 Mo.");
+      e.target.value = "";
+      return;
+    }
+
+    setUploading("gallery");
+    try {
+      const urls: string[] = [];
+      for (const file of files) {
+        urls.push(await uploadFile(file));
+      }
+      setForm((f) => ({
+        ...f,
+        galleryUrls: [...f.galleryUrls, ...urls.filter((u) => !f.galleryUrls.includes(u))],
+      }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de l'upload");
+    } finally {
+      setUploading(null);
+      e.target.value = "";
+    }
+  }
+
+  function removeGalleryImage(url: string) {
+    setForm((f) => ({ ...f, galleryUrls: f.galleryUrls.filter((u) => u !== url) }));
+  }
+
+  /** Swaps a gallery photo with the featured one, keeping both in the product. */
+  function makeFeatured(url: string) {
+    setForm((f) => ({
+      ...f,
+      imageUrl: url,
+      galleryUrls: [
+        ...f.galleryUrls.filter((u) => u !== url),
+        ...(f.imageUrl && f.imageUrl !== url ? [f.imageUrl] : []),
+      ],
+    }));
+  }
+
+  function addSize() {
+    const label = sizeDraft.trim();
+    if (label === "" || form.sizes.includes(label)) {
+      setSizeDraft("");
+      return;
+    }
+    setForm((f) => ({ ...f, sizes: [...f.sizes, label] }));
+    setSizeDraft("");
+  }
+
+  function removeSize(label: string) {
+    setForm((f) => ({ ...f, sizes: f.sizes.filter((s) => s !== label) }));
+  }
+
   function cancelEdit() {
+    setSizeDraft("");
     setEditingId(null);
     setForm(emptyForm);
     setError("");
@@ -205,12 +277,72 @@ export default function AdminProductsPage() {
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
             >
-              <option value="COUETTE">Matla couette</option>
-              <option value="DRAP">Drap de lit</option>
-              <option value="PARURE">Parure complète</option>
+              <option value="COUETTE">Collection Été</option>
+              <option value="DRAP">Collection Housse de Couette</option>
+              <option value="PARURE">Collection Couette</option>
             </select>
           </div>
         </div>
+
+        <fieldset className="rounded-lg border border-border p-4">
+          <legend className="px-1 text-sm font-medium">Tailles de ce produit</legend>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={form.askSize}
+              onChange={(e) => setForm({ ...form, askSize: e.target.checked })}
+              className="h-4 w-4"
+            />
+            Demander une taille à la commande
+          </label>
+
+          {form.askSize && (
+            <>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {form.sizes.length === 0 ? (
+                  <p className="text-xs text-muted">
+                    Aucune taille : le menu déroulant reste masqué pour ce produit.
+                  </p>
+                ) : (
+                  form.sizes.map((size) => (
+                    <span
+                      key={size}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-background px-3 py-1 text-sm"
+                    >
+                      {size}
+                      <button
+                        type="button"
+                        onClick={() => removeSize(size)}
+                        className="text-danger cursor-pointer"
+                        aria-label={`Retirer ${size}`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+
+              <div className="mt-3 flex gap-2">
+                <input
+                  value={sizeDraft}
+                  onChange={(e) => setSizeDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addSize();
+                    }
+                  }}
+                  placeholder="Ex: 160 x 200"
+                  className="flex-1"
+                />
+                <button type="button" onClick={addSize} className="btn btn-outline">
+                  Ajouter
+                </button>
+              </div>
+            </>
+          )}
+        </fieldset>
 
         <div>
           <label className="block text-sm font-medium mb-1">Description</label>
@@ -314,6 +446,62 @@ export default function AdminProductsPage() {
             )}
           </div>
         </div>
+
+        {/* Gallery (optional, shown next to the featured image on the product page) */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Galerie photos (optionnel)
+          </label>
+          <p className="text-xs text-muted mb-2">
+            Photos supplémentaires affichées avec la photo principale sur la page
+            produit. 4 Mo par photo.
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            {form.galleryUrls.map((url) => (
+              <div
+                key={url}
+                className="relative h-24 w-24 overflow-hidden rounded-lg border border-border bg-[#f5ede0]"
+              >
+                <Image src={url} alt="" fill className="object-cover" sizes="96px" />
+                <button
+                  type="button"
+                  onClick={() => removeGalleryImage(url)}
+                  className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-danger shadow cursor-pointer hover:bg-white"
+                  aria-label="Retirer la photo"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => makeFeatured(url)}
+                  className="absolute inset-x-0 bottom-0 bg-black/55 py-0.5 text-[10px] text-white cursor-pointer hover:bg-black/70"
+                >
+                  Principale
+                </button>
+              </div>
+            ))}
+
+            <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border bg-background text-muted transition-colors hover:border-accent">
+              {uploading === "gallery" ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <>
+                  <Upload className="h-5 w-5" />
+                  <span className="text-xs">Ajouter</span>
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleGalleryUpload}
+              />
+            </label>
+          </div>
+        </div>
+
 
         <div className="flex gap-3 pt-2">
           <button type="submit" disabled={uploading !== null} className="btn btn-primary">

@@ -16,7 +16,7 @@ export default function Header({ locale, dict }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-border shadow-sm">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2">
-        <Logo href={`/${locale}`} tagline={dict.siteTagline} markSize={40} className="min-w-0" />
+        <Logo href={`/${locale}`} tagline={dict.siteTagline} className="h-11 sm:h-14 w-auto" priority />
 
         <nav className="flex items-center gap-1 sm:gap-2 shrink-0">
           <Link

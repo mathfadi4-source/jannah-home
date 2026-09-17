@@ -25,10 +25,11 @@ export default async function AdminDashboard() {
         <StatCard label="Promotions actives" value={promoCount} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <QuickLink href="/admin/commandes" title="Gérer les commandes" desc="Voir et traiter les commandes clients" />
         <QuickLink href="/admin/produits" title="Gérer les produits" desc="Ajouter images, vidéos et prix" />
         <QuickLink href="/admin/promotions" title="Gérer les promos" desc="Créer des offres promotionnelles" />
+        <QuickLink href="/admin/hero" title="Images du hero" desc="Choisir les visuels de la page d'accueil" />
       </div>
     </div>
   );

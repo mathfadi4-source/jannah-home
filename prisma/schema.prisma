@@ -27,8 +27,14 @@ model Product {
   price       Float
   promoPrice  Float?
   imageUrl    String?
+  // Extra photos shown alongside the featured image on the product page.
+  galleryUrls String[]        @default([])
   videoUrl    String?
   active      Boolean         @default(true)
+  // Size choices offered for this product on the order form. An empty list, or
+  // askSize = false, hides the size selector for it entirely.
+  askSize     Boolean         @default(true)
+  sizes       String[]        @default([])
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   orderItems  OrderItem[]
@@ -55,8 +61,21 @@ model OrderItem {
   productId String
   quantity  Int     @default(1)
   unitPrice Float
+  size      String?
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
+}
+
+model HeroImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  position  Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, position])
 }
 
 model Promotion {

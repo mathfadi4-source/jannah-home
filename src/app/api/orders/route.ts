@@ -11,8 +11,6 @@ export async function POST(request: Request) {
       email,
       phone,
       address,
-      tailleCouette,
-      tailleDrap,
       notes,
       items,
     } = body;
@@ -51,18 +49,24 @@ export async function POST(request: Request) {
         email,
         phone,
         address,
-        tailleCouette: tailleCouette || null,
-        tailleDrap: tailleDrap || null,
         notes: notes || null,
         items: {
-          create: items.map((item: { productId: string; quantity: number }) => {
-            const product = productMap.get(item.productId)!;
-            return {
-              productId: item.productId,
-              quantity: item.quantity || 1,
-              unitPrice: getEffectivePrice(product),
-            };
-          }),
+          create: items.map(
+            (item: { productId: string; quantity: number; size?: string }) => {
+              const product = productMap.get(item.productId)!;
+              // Only accept a size the product actually offers.
+              const size =
+                product.askSize && item.size && product.sizes.includes(item.size)
+                  ? item.size
+                  : null;
+              return {
+                productId: item.productId,
+                quantity: item.quantity || 1,
+                unitPrice: getEffectivePrice(product),
+                size,
+              };
+            }
+          ),
         },
       },
       include: {

@@ -8,6 +8,7 @@ type OrderItem = {
   id: string;
   quantity: number;
   unitPrice: number;
+  size: string | null;
   product: { name: string };
 };
 
@@ -129,7 +130,8 @@ export default function AdminOrdersPage() {
                   <ul className="text-sm space-y-1">
                     {order.items.map((item) => (
                       <li key={item.id}>
-                        {item.product.name} × {item.quantity} —{" "}
+                        {item.product.name}
+                        {item.size && ` (${item.size})`} × {item.quantity} —{" "}
                         {formatPrice(item.unitPrice * item.quantity)}
                       </li>
                     ))}

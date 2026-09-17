@@ -14,7 +14,7 @@ const fr: Dictionary = {
   },
   footer: {
     tagline:
-      "Literie élégante : couettes, draps et parures de qualité. Commande simple, sans paiement en ligne.",
+      "Literie élégante : couettes, draps et parures de qualité. Commande simple.",
     rights: "Tous droits réservés",
     ownerSpace: "Espace propriétaire",
     quickLinks: "Liens rapides",
@@ -23,7 +23,7 @@ const fr: Dictionary = {
     hoursValue: "Lun – Sam : 9h – 19h",
     location: "Localisation",
     locationValue: "Tunis, Tunisie",
-    paymentNote: "Paiement à la livraison — aucun paiement en ligne requis.",
+    paymentNote: "Paiement à la livraison.",
   },
   hero: {
     eyebrow: "Confort & élégance pour votre chambre",
@@ -32,9 +32,6 @@ const fr: Dictionary = {
     chipQuality: "Qualité garantie",
   },
   home: {
-    title: "Matelas, Couettes & Draps de lit",
-    subtitle:
-      "Parcourez notre collection, consultez les prix et passez votre commande sans paiement en ligne. Nous vous contactons pour confirmer.",
     promotions: "Promotions en cours",
     discount: "de réduction",
     ourProducts: "Nos produits",
@@ -56,7 +53,7 @@ const fr: Dictionary = {
     deliveryTitle: "Livraison à domicile",
     deliveryDesc: "Partout en Tunisie, rapide et soignée.",
     paymentTitle: "Paiement à la livraison",
-    paymentDesc: "Aucun paiement en ligne — payez à la réception.",
+    paymentDesc: "Payez à la réception.",
     qualityTitle: "Qualité garantie",
     qualityDesc: "Tissus doux et durables, sélectionnés avec soin.",
     supportTitle: "Conseil WhatsApp",
@@ -94,9 +91,9 @@ const fr: Dictionary = {
     from: "À partir de",
   },
   categories: {
-    COUETTE: "Matla couette",
-    DRAP: "Drap de lit",
-    PARURE: "Parure complète",
+    COUETTE: "Collection Été",
+    DRAP: "Collection Housse de Couette",
+    PARURE: "Collection Couette",
   },
   order: {
     title: "Passer une commande",
@@ -112,7 +109,7 @@ const fr: Dictionary = {
     address: "Adresse *",
     addressPlaceholder: "Rue, ville, code postal...",
     sizes: "Tailles souhaitées",
-    couetteSize: "Taille matla couette",
+    couetteSize: "Taille Collection Été",
     drapSize: "Taille drap de lit / parure",
     notes: "Notes (optionnel)",
     notesPlaceholder: "Couleur préférée, instructions spéciales...",

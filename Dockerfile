@@ -15,6 +15,8 @@ ENV HTTP_PROXY=${HTTP_PROXY} \
     NO_PROXY=${NO_PROXY} \
     NEXT_TELEMETRY_DISABLED=1
 COPY --from=oven/bun:1-alpine /usr/local/bin/bun /usr/local/bin/bun
+# `bunx` is a symlink to `bun` in the official image; recreate it here.
+RUN ln -s /usr/local/bin/bun /usr/local/bin/bunx
 RUN apk add --no-cache openssl libc6-compat
 WORKDIR /app
 

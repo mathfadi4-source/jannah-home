@@ -77,7 +77,7 @@ export default function MobileNav({
 
           <div className="flex-1 overflow-y-auto px-6 pt-14 pb-6 flex flex-col">
             <div className="mx-auto mb-8 flex justify-center">
-              <Logo href={`/${locale}`} tagline={dict.siteTagline} markSize={56} />
+              <Logo href={`/${locale}`} tagline={dict.siteTagline} className="h-20 w-auto" />
             </div>
 
             <nav className="flex flex-col gap-3">

@@ -3,6 +3,7 @@ import type { Locale } from "@/i18n/config";
 export type OrderItemForMessage = {
   quantity: number;
   unitPrice: number;
+  size?: string | null;
   product: { name: string };
 };
 
@@ -83,9 +84,11 @@ export function buildOrderMessage(order: OrderForMessage, locale: Locale = "fr")
     const qty = item.quantity || 1;
     const subtotal = item.unitPrice * qty;
     total += subtotal;
-    lines.push(` • ${item.product.name} ×${qty} — ${subtotal.toFixed(0)} TND`);
+    const size = item.size ? ` (${item.size})` : "";
+    lines.push(` • ${item.product.name}${size} ×${qty} — ${subtotal.toFixed(0)} TND`);
   }
 
+  // Legacy order-level sizes, kept for orders placed before sizes moved onto lines.
   if (order.tailleCouette) lines.push(`${t.couette} : ${order.tailleCouette}`);
   if (order.tailleDrap) lines.push(`${t.drap} : ${order.tailleDrap}`);
   if (order.notes) lines.push(`${t.notes} : ${order.notes}`);

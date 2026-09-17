@@ -10,6 +10,7 @@ import Testimonials from "@/components/Testimonials";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { isValidLocale, type Locale } from "@/i18n/config";
 import { SITE } from "@/lib/site";
+import { getHeroImages } from "@/lib/hero";
 import { getEffectivePrice } from "@/lib/utils";
 
 const SITE_URL = "https://jannah-home.vercel.app";
@@ -28,7 +29,7 @@ export default async function HomePage({ params }: Props) {
   const locale = (isValidLocale(localeParam) ? localeParam : "fr") as Locale;
   const dict = await getDictionary(locale);
 
-  const [products, promotions] = await Promise.all([
+  const [products, promotions, heroImages] = await Promise.all([
     prisma.product.findMany({
       where: { active: true },
       orderBy: { createdAt: "desc" },
@@ -37,12 +38,8 @@ export default async function HomePage({ params }: Props) {
       where: { active: true },
       orderBy: { createdAt: "desc" },
     }),
+    getHeroImages(),
   ]);
-
-  const heroImages = products
-    .filter((p) => p.imageUrl)
-    .slice(0, 3)
-    .map((p) => p.imageUrl as string);
 
   // Representative image per category, taken from the most recent product that
   // has one (falls back to brand artwork inside CategoryTiles when absent).

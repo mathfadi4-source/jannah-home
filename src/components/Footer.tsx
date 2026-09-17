@@ -40,7 +40,7 @@ export default function Footer({ locale, dict }: FooterProps) {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="mb-4">
-              <Logo tagline={dict.siteTagline} markSize={42} />
+              <Logo tagline={dict.siteTagline} className="h-16 w-auto" />
             </div>
             <p className="text-sm text-muted max-w-sm leading-relaxed">
               {dict.footer.tagline}
