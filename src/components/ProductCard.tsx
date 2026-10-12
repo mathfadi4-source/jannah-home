@@ -30,12 +30,15 @@ export default function ProductCard({ locale, dict, product }: ProductCardProps)
 
   return (
     <article className="card card-hover group cursor-pointer">
-      <Link href={`/${locale}/produit/${product.id}`} className="block">
+      <Link
+        href={`/${locale}/produit/${product.id}`}
+        className="block rounded-[inherit] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-dark"
+      >
         <div className="aspect-[4/3] relative overflow-hidden bg-[#f5ede0]">
           {product.imageUrl ? (
             <Image
               src={product.imageUrl}
-              alt={product.name}
+              alt=""
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 33vw"
@@ -73,7 +76,7 @@ export default function ProductCard({ locale, dict, product }: ProductCardProps)
                 </span>
               )}
             </div>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-background text-accent-dark opacity-0 transition-opacity group-hover:opacity-100">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-background text-accent-dark transition-opacity md:opacity-0 md:group-hover:opacity-100">
               <ArrowRight className="h-4 w-4 rtl:rotate-180" />
             </span>
           </div>

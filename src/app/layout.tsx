@@ -89,7 +89,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="fr" dir="ltr" suppressHydrationWarning>
       <head>
         <meta name="apple-mobile-web-app-title" content="JANNAH HOME" />
       </head>

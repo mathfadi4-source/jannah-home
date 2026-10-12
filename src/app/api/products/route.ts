@@ -29,6 +29,7 @@ export async function GET(request: Request) {
       name: true,
       price: true,
       promoPrice: true,
+      imageUrl: true,
       askSize: true,
       sizes: true,
     },

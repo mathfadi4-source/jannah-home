@@ -3,7 +3,6 @@ import { Tag, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
-import CategoryTiles from "@/components/CategoryTiles";
 import ProductGrid from "@/components/ProductGrid";
 import Faq from "@/components/Faq";
 import Testimonials from "@/components/Testimonials";
@@ -40,16 +39,6 @@ export default async function HomePage({ params }: Props) {
     }),
     getHeroImages(),
   ]);
-
-  // Representative image per category, taken from the most recent product that
-  // has one (falls back to brand artwork inside CategoryTiles when absent).
-  const categoryImageFor = (cat: string) =>
-    products.find((p) => p.category === cat && p.imageUrl)?.imageUrl ?? null;
-  const categoryImages = {
-    COUETTE: categoryImageFor("COUETTE"),
-    DRAP: categoryImageFor("DRAP"),
-    PARURE: categoryImageFor("PARURE"),
-  };
 
   const toAbsolute = (url: string) =>
     url.startsWith("http") ? url : `${SITE_URL}${url}`;
@@ -117,15 +106,6 @@ export default async function HomePage({ params }: Props) {
         <div className="-mt-10 relative z-10">
           <TrustBar dict={dict} />
         </div>
-
-        {/* Categories */}
-        <section className="mt-16">
-          <div className="mb-6">
-            <h2 className="section-title">{dict.home.categoriesTitle}</h2>
-            <p className="text-muted">{dict.home.categoriesSubtitle}</p>
-          </div>
-          <CategoryTiles locale={locale} dict={dict} images={categoryImages} />
-        </section>
 
         {/* Promotions */}
         {promotions.length > 0 && (

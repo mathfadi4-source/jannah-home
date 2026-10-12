@@ -2,6 +2,17 @@ import { PrismaClient, ProductCategory } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/** Real bedding photographs, reused as gallery shots for the showcase products. */
+const PHOTOS = [
+  "/images/hero/hero-1.webp",
+  "/images/hero/hero-2.webp",
+  "/images/hero/hero-3.webp",
+];
+
+const COUETTE_SIZES = ["140 x 200", "200 x 200", "240 x 220"];
+const DRAP_SIZES = ["90 x 190", "140 x 190", "160 x 200", "180 x 200"];
+const PARURE_SIZES = ["160 x 200", "180 x 200", "200 x 200"];
+
 const products = [
   // ---------- Couettes ----------
   {
@@ -11,7 +22,9 @@ const products = [
     category: ProductCategory.COUETTE,
     price: 189,
     promoPrice: 149,
-    imageUrl: "/images/products/couette-sable.svg",
+    imageUrl: PHOTOS[0],
+    galleryUrls: [PHOTOS[1], PHOTOS[2], "/images/products/couette-sable.svg"],
+    sizes: COUETTE_SIZES,
   },
   {
     name: "Couette Lin Lavé Écru",
@@ -20,6 +33,7 @@ const products = [
     category: ProductCategory.COUETTE,
     price: 229,
     imageUrl: "/images/products/couette-lin.svg",
+    sizes: COUETTE_SIZES,
   },
   {
     name: "Couette Terracotta Coton Bio",
@@ -29,6 +43,8 @@ const products = [
     price: 199,
     promoPrice: 169,
     imageUrl: "/images/products/couette-terracotta.svg",
+    galleryUrls: [PHOTOS[2], PHOTOS[0]],
+    sizes: ["200 x 200", "240 x 220"],
   },
 
   // ---------- Draps ----------
@@ -39,7 +55,9 @@ const products = [
     category: ProductCategory.DRAP,
     price: 79,
     promoPrice: 65,
-    imageUrl: "/images/products/drap-blanc.svg",
+    imageUrl: PHOTOS[1],
+    galleryUrls: [PHOTOS[2], "/images/products/drap-blanc.svg"],
+    sizes: DRAP_SIZES,
   },
   {
     name: "Parure de Drap Caramel",
@@ -48,6 +66,7 @@ const products = [
     category: ProductCategory.DRAP,
     price: 119,
     imageUrl: "/images/products/drap-caramel.svg",
+    sizes: DRAP_SIZES,
   },
   {
     name: "Drap Noyer Microfibre",
@@ -57,6 +76,7 @@ const products = [
     price: 89,
     promoPrice: 72,
     imageUrl: "/images/products/drap-nuit.svg",
+    askSize: false,
   },
 
   // ---------- Parures ----------
@@ -67,7 +87,9 @@ const products = [
     category: ProductCategory.PARURE,
     price: 249,
     promoPrice: 199,
-    imageUrl: "/images/products/parure-satin.svg",
+    imageUrl: PHOTOS[2],
+    galleryUrls: [PHOTOS[0], PHOTOS[1], "/images/products/parure-satin.svg"],
+    sizes: PARURE_SIZES,
   },
   {
     name: "Parure Caramel Confort",
@@ -76,6 +98,7 @@ const products = [
     category: ProductCategory.PARURE,
     price: 219,
     imageUrl: "/images/products/parure-caramel.svg",
+    sizes: PARURE_SIZES,
   },
   {
     name: "Parure Nuit Noyer",
@@ -85,6 +108,7 @@ const products = [
     price: 269,
     promoPrice: 229,
     imageUrl: "/images/products/parure-nuit.svg",
+    sizes: [],
   },
 ];
 
@@ -114,7 +138,12 @@ async function main() {
     ],
   });
 
-  console.log(`Base de données initialisée : ${products.length} produits ajoutés.`);
+  const withSizes = products.filter((p) => (p.sizes?.length ?? 0) > 0).length;
+  const withGallery = products.filter((p) => (p.galleryUrls?.length ?? 0) > 0).length;
+  console.log(
+    `Base de données initialisée : ${products.length} produits ` +
+      `(${withSizes} avec tailles, ${withGallery} avec galerie).`
+  );
 }
 
 main()

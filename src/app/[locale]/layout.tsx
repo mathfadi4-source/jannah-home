@@ -27,12 +27,16 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <LocaleProvider locale={locale}>
-      <div className="min-h-screen flex flex-col">
+      <div
+        lang={locale}
+        dir={locale === "ar" ? "rtl" : "ltr"}
+        className="min-h-screen flex flex-col"
+      >
         <Header locale={locale} dict={dict} />
         <main className="flex-1">{children}</main>
         <Footer locale={locale} dict={dict} />
+        <WhatsAppFab locale={locale} tooltip={dict.whatsapp.fabTooltip} />
       </div>
-      <WhatsAppFab locale={locale} tooltip={dict.whatsapp.fabTooltip} />
     </LocaleProvider>
   );
 }

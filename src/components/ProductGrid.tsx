@@ -58,72 +58,83 @@ export default function ProductGrid({
 
   const hasFilters = search !== "" || category !== "ALL" || sort !== "newest";
 
+  const resultsLabel =
+    filtered.length === 1
+      ? dict.filters.resultsCountOne
+      : dict.filters.resultsCount.replace("{n}", String(filtered.length));
+
+  function resetFilters() {
+    setSearch("");
+    setCategory("ALL");
+    setSort("newest");
+  }
+
   return (
     <div>
       {/* Controls */}
-      <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative w-full lg:max-w-xs">
-          <Search className="pointer-events-none absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 h-4 w-4 text-muted-soft" />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={dict.filters.searchPlaceholder}
-            aria-label={dict.filters.searchPlaceholder}
-            className="ltr:pl-9 rtl:pr-9"
-          />
-        </div>
+      <div className="mb-5 space-y-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative w-full sm:max-w-xs">
+            <Search className="pointer-events-none absolute top-1/2 -translate-y-1/2 start-3 h-4 w-4 text-muted-soft" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={dict.filters.searchPlaceholder}
+              aria-label={dict.filters.searchPlaceholder}
+              className="ps-9 pe-9"
+            />
+            {search !== "" && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                aria-label={dict.filters.clear}
+                className="absolute top-1/2 -translate-y-1/2 end-2 flex h-6 w-6 items-center justify-center rounded-full text-muted-soft hover:text-primary cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setCategory("ALL")}
-            className={`badge cursor-pointer transition-colors ${
-              category === "ALL"
-                ? "bg-primary text-white"
-                : "bg-white text-muted ring-1 ring-border hover:text-primary"
-            }`}
-          >
-            {dict.filters.all}
-          </button>
-          {categories.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setCategory(c)}
-              className={`badge cursor-pointer transition-colors ${
-                category === c
-                  ? "bg-primary text-white"
-                  : "bg-white text-muted ring-1 ring-border hover:text-primary"
-              }`}
-            >
-              {dict.categories[c as keyof typeof dict.categories]}
-            </button>
-          ))}
-
-          <div className="relative ms-1 flex items-center">
-            <SlidersHorizontal className="pointer-events-none absolute ltr:left-2.5 rtl:right-2.5 h-4 w-4 text-muted-soft" />
+          <div className="relative flex items-center sm:ms-auto">
+            <SlidersHorizontal className="pointer-events-none absolute start-2.5 h-4 w-4 text-muted-soft" />
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              aria-label={dict.filters.sortNewest}
-              className="w-auto ltr:pl-8 rtl:pr-8 py-2 text-sm"
+              aria-label={dict.filters.sortLabel}
+              className="w-auto ps-8 pe-3 py-2 text-sm"
             >
               <option value="newest">{dict.filters.sortNewest}</option>
               <option value="priceAsc">{dict.filters.sortPriceAsc}</option>
               <option value="priceDesc">{dict.filters.sortPriceDesc}</option>
             </select>
           </div>
+        </div>
 
+        {/* One scrolling row on a phone rather than a ragged wrap. */}
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+          <CategoryPill
+            active={category === "ALL"}
+            label={dict.filters.all}
+            onClick={() => setCategory("ALL")}
+          />
+          {categories.map((c) => (
+            <CategoryPill
+              key={c}
+              active={category === c}
+              label={dict.categories[c as keyof typeof dict.categories]}
+              onClick={() => setCategory(c)}
+            />
+          ))}
+        </div>
+
+        <div className="flex items-center gap-3 text-sm text-muted">
+          <span aria-live="polite">{resultsLabel}</span>
           {hasFilters && (
             <button
               type="button"
-              onClick={() => {
-                setSearch("");
-                setCategory("ALL");
-                setSort("newest");
-              }}
-              className="inline-flex items-center gap-1 text-sm text-muted hover:text-primary cursor-pointer"
+              onClick={resetFilters}
+              className="inline-flex items-center gap-1 hover:text-primary cursor-pointer"
             >
               <X className="h-4 w-4" />
               {dict.filters.clear}
@@ -134,7 +145,19 @@ export default function ProductGrid({
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <p className="text-muted text-center py-16 card">{dict.filters.resultsNone}</p>
+        <div className="card py-16 text-center">
+          <p className="text-muted">{dict.filters.resultsNone}</p>
+          {hasFilters && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="btn btn-outline mt-4"
+            >
+              <X className="h-4 w-4" />
+              {dict.filters.clear}
+            </button>
+          )}
+        </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((product) => (
@@ -143,5 +166,30 @@ export default function ProductGrid({
         </div>
       )}
     </div>
+  );
+}
+
+function CategoryPill({
+  active,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`badge shrink-0 cursor-pointer transition-colors ${
+        active
+          ? "bg-primary text-white"
+          : "bg-white text-muted ring-1 ring-border hover:text-primary"
+      }`}
+    >
+      {label}
+    </button>
   );
 }

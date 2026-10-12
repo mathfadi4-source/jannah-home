@@ -309,6 +309,103 @@ summary:focus-visible {
   animation: scale-in 0.25s ease both;
 }
 
+/* ---------- Product gallery ---------- */
+@keyframes gallery-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-gallery-fade {
+  animation: gallery-fade 0.28s ease both;
+}
+
+/* Hairline lens: the photograph stays readable underneath it. */
+.gallery-lens {
+  border: 1px solid rgb(255 255 255 / 0.9);
+  border-radius: 4px;
+  background: rgb(255 255 255 / 0.18);
+  box-shadow: 0 0 0 9999px rgb(74 45 14 / 0.12);
+}
+
+.gallery-lightbox {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+}
+
+.gallery-lightbox::backdrop {
+  background: rgb(16 9 4 / 0.92);
+  animation: backdrop-in 0.2s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-gallery-fade,
+  .gallery-lightbox::backdrop {
+    animation-duration: 0.01ms;
+  }
+}
+
+/* ---------- Order confirmation dialog ---------- */
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-pop {
+  0% { opacity: 0; transform: translateY(16px) scale(0.92); }
+  60% { opacity: 1; transform: translateY(0) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes check-ring {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes check-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Plain CSS, not Tailwind utilities: the `open:` and `backdrop:` variants only
+   apply to utilities Tailwind itself generates, never to custom classes. */
+.order-dialog[open] {
+  animation: dialog-pop 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.order-dialog::backdrop {
+  background: rgb(0 0 0 / 0.5);
+  animation: backdrop-in 0.2s ease both;
+}
+
+.animate-check-ring {
+  animation: check-ring 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-check-draw {
+  stroke-dasharray: 34;
+  stroke-dashoffset: 34;
+  animation: check-draw 0.4s 0.22s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-dialog[open],
+  .order-dialog::backdrop,
+  .animate-check-ring,
+  .animate-check-draw {
+    animation-duration: 0.01ms;
+    animation-delay: 0ms;
+  }
+  .animate-check-draw {
+    stroke-dashoffset: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -38,7 +38,6 @@ export type Dictionary = {
     ourProductsSubtitle: string;
     noProducts: string;
     categoriesTitle: string;
-    categoriesSubtitle: string;
     faqTitle: string;
     faqSubtitle: string;
     testimonialsTitle: string;
@@ -59,12 +58,8 @@ export type Dictionary = {
   };
   tiles: {
     couetteTitle: string;
-    couetteDesc: string;
     drapTitle: string;
-    drapDesc: string;
     parureTitle: string;
-    parureDesc: string;
-    viewAll: string;
   };
   filters: {
     searchPlaceholder: string;
@@ -73,11 +68,18 @@ export type Dictionary = {
     sortPriceAsc: string;
     sortPriceDesc: string;
     resultsNone: string;
+    resultsCount: string;
+    resultsCountOne: string;
+    sortLabel: string;
     clear: string;
   };
   product: {
     back: string;
     video: string;
+    prevImage: string;
+    nextImage: string;
+    zoomHint: string;
+    openFullscreen: string;
     promo: string;
     orderThis: string;
     orderWhatsapp: string;
@@ -112,6 +114,10 @@ export type Dictionary = {
     notesPlaceholder: string;
     products: string;
     loadingProducts: string;
+    productsUnavailable: string;
+    decreaseQty: string;
+    increaseQty: string;
+    sizeRequired: string;
     choose: string;
     other: string;
     submit: string;
@@ -125,8 +131,8 @@ export type Dictionary = {
     summaryTitle: string;
     summaryEmpty: string;
     total: string;
-    sendWhatsapp: string;
-    whatsappHint: string;
+    ref: string;
+    newOrder: string;
     addLine: string;
   };
   faq: {
