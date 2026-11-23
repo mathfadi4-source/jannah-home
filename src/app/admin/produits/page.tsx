@@ -578,7 +578,7 @@ export default function AdminProductsPage() {
                   </span>
                 )}
               </p>
-              <div className="flex gap-2 mt-3">
+              <div className="flex flex-wrap gap-2 mt-3">
                 <button
                   onClick={() => startEdit(product)}
                   className="btn btn-outline text-xs py-1.5 px-3"
