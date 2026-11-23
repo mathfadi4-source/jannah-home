@@ -137,6 +137,22 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "ID requis" }, { status: 400 });
   }
 
-  await prisma.product.delete({ where: { id } });
-  return NextResponse.json({ success: true });
+  try {
+    await prisma.product.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    const code = (err as { code?: string }).code;
+    // A product referenced by an order cannot be removed without destroying that
+    // order's history, so the admin hides it instead.
+    if (code === "P2003") {
+      return NextResponse.json(
+        { error: "Ce produit figure dans des commandes. Masquez-le au lieu de le supprimer." },
+        { status: 409 }
+      );
+    }
+    if (code === "P2025") {
+      return NextResponse.json({ error: "Produit introuvable" }, { status: 404 });
+    }
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
 }

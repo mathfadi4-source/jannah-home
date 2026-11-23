@@ -9,6 +9,8 @@ import {
   Film,
   Pencil,
   Trash2,
+  Eye,
+  EyeOff,
   Plus,
   Loader2,
   AlertCircle,
@@ -233,7 +235,28 @@ export default function AdminProductsPage() {
 
   async function deleteProduct(id: string) {
     if (!confirm("Supprimer ce produit ?")) return;
-    await fetch(`/api/products?id=${id}`, { method: "DELETE" });
+    setError("");
+    const res = await fetch(`/api/products?id=${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || "Suppression impossible");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    loadProducts();
+  }
+
+  async function toggleActive(product: Product) {
+    setError("");
+    const res = await fetch("/api/products", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: product.id, active: !product.active }),
+    });
+    if (!res.ok) {
+      setError("Erreur lors de l'enregistrement");
+      return;
+    }
     loadProducts();
   }
 
@@ -562,6 +585,22 @@ export default function AdminProductsPage() {
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   Modifier
+                </button>
+                <button
+                  onClick={() => toggleActive(product)}
+                  className="btn btn-outline text-xs py-1.5 px-3"
+                >
+                  {product.active ? (
+                    <>
+                      <EyeOff className="h-3.5 w-3.5" />
+                      Masquer
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-3.5 w-3.5" />
+                      Afficher
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => deleteProduct(product.id)}
